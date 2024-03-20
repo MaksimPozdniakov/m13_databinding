@@ -2,8 +2,8 @@ package project.gb.searchbar.ui.main
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.launchIn
@@ -25,15 +25,20 @@ class MainViewModel : ViewModel() {
         state.value = State.Success
     }
 
-//    @OptIn(FlowPreview::class)
+    @OptIn(FlowPreview::class)
     fun updateSearchText(str: String) {
         searchProcess?.cancel()
-        requestString.value = str
-        searchProcess = requestString
-            .debounce(1000)
-            .onEach {
-                searchString()
-            }
-            .launchIn(viewModelScope)
+
+        if (str.length < 3) {
+            state.value = State.Error("Запрос должен быть не менее 3-х символов")
+        } else {
+            requestString.value = str
+            searchProcess = requestString
+                .debounce(1000)
+                .onEach {
+                    searchString()
+                }
+                .launchIn(viewModelScope)
+        }
     }
 }

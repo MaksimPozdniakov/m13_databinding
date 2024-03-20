@@ -13,6 +13,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import project.gb.searchbar.R
 import project.gb.searchbar.databinding.FragmentMainBinding
@@ -59,7 +60,6 @@ class MainFragment : Fragment() {
         binding.mainConstraintLayout.setOnClickListener {
             onEmptyAreaClicked()
             emptyAreaClickedForKeyboard()
-
         }
 
         binding.viewModel = viewModel
@@ -94,12 +94,7 @@ class MainFragment : Fragment() {
             interpolator = AccelerateDecelerateInterpolator()
         })
         constraintSetStart.applyTo(constraintLayout)
-        //binding.textInputEditText.clearFocus() // Сброс фокуса
-    }
-
-    private fun hideKeyboard() {
-        val inputMethodManager = requireContext().getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
-        inputMethodManager.hideSoftInputFromWindow(requireView().windowToken, 0)
+        binding.textInputEditText.clearFocus() // Сброс фокуса
     }
 
     /**
@@ -107,6 +102,14 @@ class MainFragment : Fragment() {
      */
     private fun onEmptyAreaClicked() {
         collapseEditText()
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.state.collect {
+                if (it is State.Success) {
+                    binding.progressBar.isVisible = false
+                }
+            }
+        }
     }
 
     override fun onDestroyView() {
