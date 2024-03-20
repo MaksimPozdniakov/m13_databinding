@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Строка поиска</string>
+    <string name="search_query">Введите запрос</string>
+    <string name="result_request">Здесь будет выведен результат запроса</string>
+</resources>
